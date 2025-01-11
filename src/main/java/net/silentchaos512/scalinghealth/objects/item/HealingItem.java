@@ -76,12 +76,15 @@ public class HealingItem extends Item {
         if (!world.isClientSide) {
             entityLiving.addEffect(new MobEffectInstance(Registration.BANDAGED.get(),
                     this.effectDuration, this.healSpeed, false, false));
-            stack.shrink(1);
 
             if (entityLiving instanceof Player) {
                 Player player = (Player) entityLiving;
+                if (!player.isCreative())
+                    stack.shrink(1);
                 player.awardStat(Stats.ITEM_USED.get(this));
             }
+            else
+                stack.shrink(1);
         }
         return stack;
     }

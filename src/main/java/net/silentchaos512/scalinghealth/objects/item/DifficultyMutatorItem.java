@@ -111,7 +111,8 @@ public class DifficultyMutatorItem extends Item {
         float change = (float) getEffectAmount(world);
         if (!world.isClientSide) {
             source.addDifficulty(change);
-            stack.shrink(1);
+            if (!player.isCreative())
+                stack.shrink(1);
             player.awardStat(Stats.ITEM_USED.get(this));
         }
 
