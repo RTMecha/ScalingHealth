@@ -3,7 +3,7 @@ package net.silentchaos512.scalinghealth.capability;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
@@ -13,21 +13,21 @@ import net.silentchaos512.scalinghealth.utils.ModifierHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PetHealthCapability implements IPetData, ICapabilitySerializable<CompoundTag> {
-    public static Capability<IPetData> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
-    public static ResourceLocation NAME = ScalingHealth.getId("pet_health");
+public class LivingEntityHealthCapability implements ILivingEntityData, ICapabilitySerializable<CompoundTag> {
+    public static Capability<ILivingEntityData> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
+    public static ResourceLocation NAME = ScalingHealth.getId("entity_health");
 
-    private static final String NBT_HEALTH = "SHPetBonusHealth";
+    private static final String NBT_HEALTH = "SHBonusHealth";
 
-    private final LazyOptional<IPetData> holder = LazyOptional.of(() -> this);
+    private final LazyOptional<ILivingEntityData> holder = LazyOptional.of(() -> this);
 
     private float bonusHealth;
     private boolean refreshed = false;
 
     @Override
-    public void addHealth(double hp, TamableAnimal pet ) {
+    public void addHealth(double hp, LivingEntity livingEntity) {
         bonusHealth += hp;
-        ModifierHandler.setMaxHealth(pet, bonusHealth, AttributeModifier.Operation.ADDITION);
+        ModifierHandler.setMaxHealth(livingEntity, bonusHealth, AttributeModifier.Operation.ADDITION);
     }
 
     @Override
@@ -36,10 +36,10 @@ public class PetHealthCapability implements IPetData, ICapabilitySerializable<Co
     }
 
     @Override
-    public void tick(TamableAnimal pet) {
-        if(!refreshed && pet.tickCount > 2){
+    public void tick(LivingEntity livingEntity) {
+        if(!refreshed && livingEntity.tickCount > 2){
             refreshed = true;
-            ModifierHandler.setMaxHealth(pet, getBonusHealth(), AttributeModifier.Operation.ADDITION);
+            ModifierHandler.setMaxHealth(livingEntity, getBonusHealth(), AttributeModifier.Operation.ADDITION);
         }
     }
 
@@ -70,6 +70,6 @@ public class PetHealthCapability implements IPetData, ICapabilitySerializable<Co
             ScalingHealth.LOGGER.error("Failed to get capabilities from {}", obj);
             return false;
         }
-        return obj instanceof TamableAnimal;
+        return obj instanceof LivingEntity;
     }
 }

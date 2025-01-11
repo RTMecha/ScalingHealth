@@ -1,6 +1,5 @@
 package net.silentchaos512.scalinghealth.event;
 
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.silentchaos512.scalinghealth.ScalingHealth;
 import net.silentchaos512.scalinghealth.capability.DifficultyAffectedCapability;
 import net.silentchaos512.scalinghealth.capability.DifficultySourceCapability;
-import net.silentchaos512.scalinghealth.capability.PetHealthCapability;
+import net.silentchaos512.scalinghealth.capability.LivingEntityHealthCapability;
 import net.silentchaos512.scalinghealth.capability.PlayerDataCapability;
 import net.silentchaos512.scalinghealth.config.SHConfig;
 import net.silentchaos512.scalinghealth.utils.config.EnabledFeatures;
@@ -58,9 +57,9 @@ public final class DifficultyEvents {
             debug(() -> "attach player data");
             event.addCapability(PlayerDataCapability.NAME, new PlayerDataCapability());
         }
-        if(EnabledFeatures.petBonusHpEnabled() && PetHealthCapability.canAttachTo(entity)){
+        if(EnabledFeatures.petBonusHpEnabled() && LivingEntityHealthCapability.canAttachTo(entity)){
             debug(()-> "attach pet data");
-            event.addCapability(PetHealthCapability.NAME, new PetHealthCapability());
+            event.addCapability(LivingEntityHealthCapability.NAME, new LivingEntityHealthCapability());
         }
     }
 
@@ -87,17 +86,17 @@ public final class DifficultyEvents {
             entity.getCapability(DifficultyAffectedCapability.INSTANCE).ifPresent(data ->
                     data.tick((Mob)entity));
 
-        if(entity instanceof TamableAnimal) {
-            if(!((TamableAnimal) entity).isTame()) return;
-                entity.getCapability(PetHealthCapability.INSTANCE).ifPresent(data ->
-                        data.tick((TamableAnimal) entity));
+        if (entity instanceof Player) {
+            if (entity.level().getGameTime() % 20 == 0) {
+                entity.getCapability(DifficultySourceCapability.INSTANCE).ifPresent(source -> {
+                    source.addDifficulty((float) SHDifficulty.changePerSecond());
+                });
+            }
+            return;
         }
 
-        if (entity instanceof Player && entity.level().getGameTime() % 20 == 0) {
-            entity.getCapability(DifficultySourceCapability.INSTANCE).ifPresent(source -> {
-                source.addDifficulty((float) SHDifficulty.changePerSecond());
-            });
-        }
+        entity.getCapability(LivingEntityHealthCapability.INSTANCE).ifPresent(data ->
+                data.tick(entity));
     }
 
     @SubscribeEvent

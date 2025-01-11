@@ -41,9 +41,8 @@ public class PetEventHandler {
         LivingEntity entity = event.getEntity();
         if (entity != null && !entity.level().isClientSide) {
             boolean fullHp = entity.getHealth() == entity.getMaxHealth();
-            boolean isTamed = entity instanceof TamableAnimal && ((TamableAnimal) entity).isTame();
             boolean isRegenTime = entity.invulnerableTime <= 0 && entity.tickCount % regenDelay == 0;
-            if (isTamed && isRegenTime && !fullHp)
+            if (isRegenTime && !fullHp)
                 entity.heal(2f);
         }
     }
@@ -52,20 +51,18 @@ public class PetEventHandler {
     public static void onPetInteraction(PlayerInteractEvent.EntityInteractSpecific event){
         if(!EnabledFeatures.petBonusHpEnabled() ||
                 !(event.getItemStack().getItem() instanceof HeartCrystal) ||
-                !(event.getTarget() instanceof TamableAnimal))
+                !(event.getTarget() instanceof LivingEntity))
             return;
 
-        TamableAnimal pet = (TamableAnimal) event.getTarget();
-        if(!pet.isTame())
-            return;
+        LivingEntity entity = (LivingEntity) event.getTarget();
 
-        if(pet.level().isClientSide) {
+        if (entity.level().isClientSide) {
             event.setCancellationResult(InteractionResult.SUCCESS);
             event.setCanceled(true);
             return;
         }
 
         HeartCrystal heart = (HeartCrystal) event.getItemStack().getItem();
-        heart.increasePetHp(event.getEntity(), pet, event.getItemStack());
+        heart.increaseEntityHP(event.getEntity(), entity, event.getItemStack());
     }
 }
