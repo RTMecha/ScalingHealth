@@ -33,10 +33,7 @@ import net.silentchaos512.scalinghealth.ScalingHealth;
 import net.silentchaos512.scalinghealth.loot.TableGlobalModifier;
 import net.silentchaos512.scalinghealth.loot.conditions.EntityGroupCondition;
 import net.silentchaos512.scalinghealth.loot.conditions.SHMobProperties;
-import net.silentchaos512.scalinghealth.objects.item.DifficultyMutatorItem;
-import net.silentchaos512.scalinghealth.objects.item.HealingItem;
-import net.silentchaos512.scalinghealth.objects.item.HeartCrystal;
-import net.silentchaos512.scalinghealth.objects.item.PowerCrystal;
+import net.silentchaos512.scalinghealth.objects.item.*;
 import net.silentchaos512.scalinghealth.objects.potion.BandagedEffect;
 import net.silentchaos512.scalinghealth.world.HeartCrystalPlacement;
 import net.silentchaos512.scalinghealth.world.PowerCrystalPlacement;
@@ -113,10 +110,16 @@ public class Registration {
             new Item(new Item.Properties()));
     public static final RegistryObject<Item> HEART_DUST = ITEMS.register("heart_dust", () ->
             new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CURSED_HEART_CRYSTAL = ITEMS.register("cursed_heart_crystal", () ->
+            new CursedHeartCrystal(new Item.Properties()));
+    public static final RegistryObject<Item> EMPTY_HEART_CRYSTAL = ITEMS.register("empty_heart_crystal", () ->
+            new EmptyHeartCrystal(new Item.Properties()));
     public static final RegistryObject<Item> POWER_CRYSTAL = ITEMS.register("power_crystal", () ->
             new PowerCrystal(new Item.Properties()));
     public static final RegistryObject<Item> POWER_CRYSTAL_SHARD = ITEMS.register("power_crystal_shard", () ->
             new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SHATTERED_POWER_CRYSTAL = ITEMS.register("shattered_power_crystal", () ->
+            new ShatteredPowerCrystal(new Item.Properties()));
 
     //healing
     public static final RegistryObject<Item> BANDAGES = ITEMS.register("bandages", () ->
@@ -198,8 +201,11 @@ public class Registration {
             event.accept(HEART_CRYSTAL);
             event.accept(HEART_CRYSTAL_SHARD);
             event.accept(HEART_DUST);
+            event.accept(CURSED_HEART_CRYSTAL);
+            event.accept(EMPTY_HEART_CRYSTAL);
             event.accept(POWER_CRYSTAL);
             event.accept(POWER_CRYSTAL_SHARD);
+            event.accept(SHATTERED_POWER_CRYSTAL);
             event.accept(BANDAGES);
             event.accept(MEDKIT);
             event.accept(CURSED_HEART);

@@ -8,8 +8,8 @@ import net.silentchaos512.scalinghealth.utils.config.EnabledFeatures;
 import net.silentchaos512.scalinghealth.utils.config.SHItems;
 import net.silentchaos512.scalinghealth.utils.config.SHPlayers;
 
-public class PowerCrystal extends StatBoosterItem {
-    public PowerCrystal(Properties properties) {
+public class ShatteredPowerCrystal extends StatBoosterItem {
+    public ShatteredPowerCrystal(Properties properties) {
         super(properties);
     }
 
@@ -21,7 +21,7 @@ public class PowerCrystal extends StatBoosterItem {
     @Override
     protected boolean isStatIncreaseAllowed(Player player) {
         return EnabledFeatures.powerCrystalEnabled() &&
-                SHPlayers.getPlayerData(player).getPowerCrystals() * SHItems.powerCrystalIncreaseAmount() <= SHPlayers.maxAttackDamage();
+                SHPlayers.getPlayerData(player).getPowerCrystals() > 0;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PowerCrystal extends StatBoosterItem {
 
     @Override
     protected void increaseStat(Player player) {
-        SHPlayers.getPlayerData(player).addPowerCrystal(player);
+        SHPlayers.getPlayerData(player).subPowerCrystal(player);
     }
 
     @Override
@@ -51,5 +51,5 @@ public class PowerCrystal extends StatBoosterItem {
     }
 
     @Override
-    protected boolean shouldConsumeLevels() { return true; }
+    protected boolean shouldConsumeLevels() { return false; }
 }

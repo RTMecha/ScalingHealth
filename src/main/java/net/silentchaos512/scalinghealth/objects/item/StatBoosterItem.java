@@ -1,6 +1,5 @@
 package net.silentchaos512.scalinghealth.objects.item;
 
-import net.minecraft.Util;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -11,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.silentchaos512.scalinghealth.ScalingHealth;
 import net.silentchaos512.scalinghealth.capability.IPlayerData;
-import net.silentchaos512.scalinghealth.capability.PetHealthCapability;
+import net.silentchaos512.scalinghealth.capability.LivingEntityHealthCapability;
 import net.silentchaos512.scalinghealth.resources.mechanics.SHMechanics;
 import net.silentchaos512.scalinghealth.utils.ParticleUtils;
 import net.silentchaos512.scalinghealth.utils.SoundUtils;
@@ -58,7 +58,7 @@ public abstract class StatBoosterItem extends Item {
         final int levelRequirement = getLevelCost(player);
 
         // Does player have enough XP?
-        if (player.experienceLevel < levelRequirement) {
+        if (player.experienceLevel < levelRequirement && shouldConsumeLevels()) {
             if (world.isClientSide) {
                 String translationKey = "item.scalinghealth.stat_booster.notEnoughXP";
                 player.sendSystemMessage(Component.translatable(translationKey, levelRequirement));
@@ -87,9 +87,7 @@ public abstract class StatBoosterItem extends Item {
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
-    public void increasePetHp(Player player, TamableAnimal pet, ItemStack stack){
-        //check config
-
+    public void increaseEntityHP(Player player, LivingEntity livingEntity, ItemStack stack) {
         int levelRequirement = getLevelCost(player);
         if (player.experienceLevel < levelRequirement) {
             String translationKey = "item.scalinghealth.stat_booster.notEnoughXP";
@@ -98,9 +96,10 @@ public abstract class StatBoosterItem extends Item {
         }
 
         usedForPet = true;
-        pet.getCapability(PetHealthCapability.INSTANCE).ifPresent(data -> data.addHealth(SHMechanics.getMechanics().mobMechanics().pets().petsHealthCrystalGain(), pet));
-        stack.shrink(1);
-        consumeLevels(player, levelRequirement);
+        livingEntity.getCapability(LivingEntityHealthCapability.INSTANCE).ifPresent(data -> data.addHealth(SHMechanics.getMechanics().mobMechanics().pets().petsHealthCrystalGain(), livingEntity));
+        if (!player.isCreative())
+            stack.shrink(1);
+       consumeLevels(player, levelRequirement);
         player.awardStat(Stats.ITEM_USED.get(this));
     }
 
@@ -118,11 +117,14 @@ public abstract class StatBoosterItem extends Item {
 
     protected abstract SoundEvent getSoundEffect();
 
+    protected abstract boolean shouldConsumeLevels();
+
     private InteractionResultHolder<ItemStack> useAsConsumable(Level world, Player player, ItemStack stack, int levelRequirement, boolean consumed) {
         if (consumed) {
             world.playSound(null, player.blockPosition(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS,
                     0.5f, 1 + 0.1f * (float) ScalingHealth.RANDOM.nextGaussian());
-            stack.shrink(1);
+            if (!player.isCreative())
+                stack.shrink(1);
             consumeLevels(player, levelRequirement);
             player.awardStat(Stats.ITEM_USED.get(this));
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
@@ -132,7 +134,8 @@ public abstract class StatBoosterItem extends Item {
 
     private InteractionResultHolder<ItemStack> useAsStatIncreaseItem(Player player, ItemStack stack, int levelRequirement) {
         increaseStat(player);
-        stack.shrink(1);
+        if (!player.isCreative())
+            stack.shrink(1);
         consumeLevels(player, levelRequirement);
         player.awardStat(Stats.ITEM_USED.get(this));
         IPlayerData.sendUpdatePacketTo(player);
@@ -145,8 +148,10 @@ public abstract class StatBoosterItem extends Item {
         SoundUtils.play(player, getSoundEffect());
     }
 
-    private static void consumeLevels(Player player, int amount) {
-        player.giveExperienceLevels(-amount);
-        SHPlayers.getPlayerData(player).updateStats(player);
+    private void consumeLevels(Player player, int amount) {
+        if (shouldConsumeLevels()) {
+            player.giveExperienceLevels(-amount);
+            SHPlayers.getPlayerData(player).updateStats(player);
+        }
     }
 }

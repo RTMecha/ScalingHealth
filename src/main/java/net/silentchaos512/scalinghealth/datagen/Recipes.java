@@ -5,6 +5,7 @@ import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import net.silentchaos512.scalinghealth.ScalingHealth;
@@ -48,6 +49,18 @@ public class Recipes extends RecipeProvider {
                 .define('e', Items.TERRACOTTA)
                 .unlockedBy("cobblestone", getDefaultTrigger())
                 .showNotification(false)
+                .group(ScalingHealth.MOD_ID)
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Registration.CURSED_HEART_CRYSTAL.get(), 1)
+                .requires(Ingredient.of(Registration.CURSED_HEART.get(), Registration.HEART_CRYSTAL.get()))
+                .unlockedBy("cobblestone", getDefaultTrigger())
+                .group(ScalingHealth.MOD_ID)
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Registration.EMPTY_HEART_CRYSTAL.get(), 1)
+                .requires(Ingredient.of(Registration.CURSED_HEART.get(), Registration.HEART_CRYSTAL.get(), Registration.ENCHANTED_HEART.get()))
+                .unlockedBy("cobblestone", getDefaultTrigger())
                 .group(ScalingHealth.MOD_ID)
                 .save(consumer);
     }

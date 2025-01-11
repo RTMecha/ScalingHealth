@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "scalinghealth",
+  "ingredients": [
+    {
+      "item": "scalinghealth:heart_crystal"
+    },
+    {
+      "item": "scalinghealth:cursed_heart"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "scalinghealth:cursed_heart_crystal"
+  }
+}

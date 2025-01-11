@@ -51,6 +51,12 @@ public class PlayerDataCapability implements IPlayerData, ICapabilitySerializabl
     }
 
     @Override
+    public void resetHeartCrystals(Player player) {
+        heartCrystals = 0;
+        ModifierHandler.setMaxHealth(player, getModifiedHealth(player), AttributeModifier.Operation.ADDITION);
+    }
+
+    @Override
     public int getPowerCrystals() {
         return powerCrystals;
     }

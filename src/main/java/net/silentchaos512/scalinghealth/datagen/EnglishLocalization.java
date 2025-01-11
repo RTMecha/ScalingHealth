@@ -47,6 +47,10 @@ public class EnglishLocalization extends LanguageProvider {
         addItem("stat_booster.notEnoughXP", "You need %d XP levels to use this.");
         add(Registration.HEART_CRYSTAL.get(), "Heart Crystal");
         addItem("heart_crystal.desc", "Increases maximum health");
+        addItem("cursed_heart_crystal.desc", "Decreases maximum health");
+        add(Registration.CURSED_HEART_CRYSTAL.get(), "Cursed Heart Crystal");
+        addItem("empty_heart_crystal.desc", "Resets maximum health");
+        add(Registration.EMPTY_HEART_CRYSTAL.get(), "Empty Heart Crystal");
         add(Registration.HEART_DUST.get(), "Heart Dust");
         addItem("healing_item.value", "Restores %d%% of your health over %d seconds.");
         addItem("healing_item.howToUse", "Use for %d seconds to apply.");

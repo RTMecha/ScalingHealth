@@ -19,6 +19,8 @@ public interface IPlayerData {
 
     void setHeartCrystals(Player player, int amount);
 
+    void resetHeartCrystals(Player player);
+
     int getPowerCrystals();
 
     void setPowerCrystalCount(Player player, int amount);
@@ -31,6 +33,10 @@ public interface IPlayerData {
         setHeartCrystals(player, getHeartCrystals() + amount);
     }
 
+    default void subHeartCrystals(Player player, int amount) {
+        setHeartCrystals(player, getHeartCrystals() - amount);
+    }
+
     default void addPowerCrystal(Player player) {
         setPowerCrystalCount(player, getPowerCrystals() + 1);
     }
@@ -38,6 +44,8 @@ public interface IPlayerData {
     default void addPowerCrystals(Player player, int amount) {
         setPowerCrystalCount(player, getPowerCrystals() + amount);
     }
+
+    default void subPowerCrystal(Player player) { setPowerCrystalCount(player, getPowerCrystals() - 1); }
 
     default int getModifiedHealth(Player player) {
         return 2 * SHPlayers.clampExtraHearts(getBonusHearts(player)) + SHPlayers.startingHealth() - 20;
