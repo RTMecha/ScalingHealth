@@ -76,8 +76,10 @@ public final class BlightHandler {
             if(slayer != null)  {
                 if(almostFinalMessage.getString().contains("  "))
                     finalMessage = Component.literal(almostFinalMessage.getString().replace("  ", " " + slayer.getName().getString() + " ")) ;
+                else if (slayer.getItemInHand(InteractionHand.MAIN_HAND).hasCustomHoverName())
+                    finalMessage = Component.literal(almostFinalMessage.getString().formatted("Blight " + blight.getName().getString(), slayer.getName().getString(), slayer.getItemInHand(InteractionHand.MAIN_HAND).getHoverName().getString()));
                 else
-                    finalMessage = Component.literal(almostFinalMessage.getString() + slayer.getName().getString());
+                    finalMessage = Component.literal(almostFinalMessage.getString().formatted("Blight " + blight.getName().getString(), slayer.getName().getString()));
             }
 
             for (Player p : blight.level().players())
